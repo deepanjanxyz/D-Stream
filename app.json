@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "D-Stream PRO",
+    "slug": "d-stream",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#000000",
+    "android": {
+      "package": "com.deepanjan.dstream",
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "FOREGROUND_SERVICE"
+      ]
+    }
+  }
+}
