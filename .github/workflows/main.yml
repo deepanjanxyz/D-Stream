@@ -11,9 +11,9 @@ jobs:
       - run: npm install
       - name: Build APK
         run: |
-          npx expo prebuild --platform android
+          npx expo prebuild --platform android --no-interactive
           cd android && ./gradlew assembleRelease
       - uses: actions/upload-artifact@v4
         with:
-          name: D-Stream-Final
+          name: D-Stream-Final-APK
           path: android/app/build/outputs/apk/release/*.apk
