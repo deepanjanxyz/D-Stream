@@ -1,30 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, StatusBar } from 'react-native';
 import { Video } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function VideoScreen() {
-  const [lastPosition, setLastPosition] = useState(0);
+  const video = useRef(null);
 
-  // ১০ সেকেন্ড রিজিউম লজিক
-  const handlePlaybackStatusUpdate = async (status) => {
-    if (status.isLoaded && status.isPlaying) {
-      await AsyncStorage.setItem('last_video_pos', status.positionMillis.toString());
-    }
-  };
+  useEffect(() => {
+    const loadLastPos = async () => {
+      const savedPos = await AsyncStorage.getItem('last_video_pos');
+      if (savedPos && video.current) {
+        // ১০ সেকেন্ড আগে থেকে শুরু
+        const resumePos = Math.max(0, parseInt(savedPos) - 10000);
+        await video.current.setPositionAsync(resumePos);
+      }
+    };
+    loadLastPos();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.neonTitle}>D-STREAM VIDEO</Text>
-      <View style={styles.videoCard}>
-        <Text style={{color: '#fff'}}>ভিডিও প্লেয়ার লোড হচ্ছে...</Text>
-      </View>
+      <StatusBar hidden />
+      <Video
+        ref={video}
+        style={styles.video}
+        source={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
+        useNativeControls
+        resizeMode="contain"
+        onPlaybackStatusUpdate={status => {
+          if (status.isLoaded) {
+            AsyncStorage.setItem('last_video_pos', status.positionMillis.toString());
+          }
+        }}
+      />
     </View>
   );
 }
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000', padding: 20, paddingTop: 50 },
-  neonTitle: { color: '#32CD32', fontSize: 26, fontWeight: 'bold', textShadowColor: '#32CD32', textShadowRadius: 10 },
-  videoCard: { width: '100%', height: 200, backgroundColor: '#1A1A1A', borderRadius: 15, justifyContent: 'center', alignItems: 'center', marginTop: 20 }
+  container: { flex: 1, backgroundColor: '#000' },
+  video: { alignSelf: 'center', width: '100%', height: '100%' }
 });
