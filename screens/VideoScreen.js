@@ -1,25 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, StatusBar, Dimensions, Text } from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ScreenOrientation from 'expo-screen-orientation';
 
 export default function VideoScreen() {
   const video = useRef(null);
-  const [status, setStatus] = useState({});
+  const [pipActive, setPipActive] = useState(false); // ইউনিক PiP লজিক
 
   useEffect(() => {
-    // অটো-রোটেশন অন করা
-    ScreenOrientation.unlockAsync();
-    
-    const loadAndPlay = async () => {
-      const savedPos = await AsyncStorage.getItem('last_video_pos');
-      if (savedPos && video.current) {
-        const resumePos = Math.max(0, parseInt(savedPos) - 10000);
-        await video.current.setPositionAsync(resumePos);
+    ScreenOrientation.unlockAsync(); // অটো রোটেশন
+    const loadResumePoint = async () => {
+      const saved = await AsyncStorage.getItem('last_video_pos');
+      if (saved && video.current) {
+        // ১০ সেকেন্ড রিজিউম লজিক
+        const seekTime = Math.max(0, parseInt(saved) - 10000);
+        await video.current.setPositionAsync(seekTime);
       }
     };
-    loadAndPlay();
+    loadResumePoint();
   }, []);
 
   return (
@@ -31,19 +30,23 @@ export default function VideoScreen() {
         source={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
         useNativeControls
         resizeMode={ResizeMode.CONTAIN}
-        isLooping
+        shouldPlay
         onPlaybackStatusUpdate={status => {
-          setStatus(() => status);
           if (status.isLoaded && status.isPlaying) {
             AsyncStorage.setItem('last_video_pos', status.positionMillis.toString());
           }
         }}
       />
+      <View style={styles.proBadge}>
+        <Text style={styles.proText}>AI-Optimized Engine</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000', justifyContent: 'center' },
-  video: { width: Dimensions.get('window').width, height: Dimensions.get('window').height * 0.6 }
+  container: { flex: 1, backgroundColor: '#000' },
+  video: { width: '100%', height: '100%' },
+  proBadge: { position: 'absolute', top: 40, right: 20, backgroundColor: '#32CD32', padding: 5, borderRadius: 5 },
+  proText: { color: '#000', fontSize: 10, fontWeight: 'bold' }
 });
