@@ -1,4 +1,4 @@
-name: Build D-Stream Pro Max
+name: Build D-Stream
 on: [push]
 jobs:
   build:
@@ -9,12 +9,11 @@ jobs:
         with:
           node-version: 18
       - run: npm install
-      - name: Build Pro APK
+      - name: Build APK
         run: |
           npx expo prebuild --platform android --no-interactive
           cd android && ./gradlew assembleRelease
-      - name: Upload D-Stream Pro APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: D-Stream-Pro-Max
+          name: D-Stream-Final
           path: android/app/build/outputs/apk/release/*.apk
