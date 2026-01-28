@@ -3,21 +3,7 @@
     "name": "D-Stream",
     "slug": "d-stream",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#000000",
-    "ios": {
-      "bundleIdentifier": "com.deepanjan.dstream",
-      "supportsTablet": true
-    },
-    "android": {
-      "package": "com.deepanjan.dstream",
-      "permissions": [
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE",
-        "FOREGROUND_SERVICE",
-        "WAKE_LOCK"
-      ]
-    }
+    "android": { "package": "com.deepanjan.dstream" },
+    "ios": { "bundleIdentifier": "com.deepanjan.dstream" }
   }
 }
