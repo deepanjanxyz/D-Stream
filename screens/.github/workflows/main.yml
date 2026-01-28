@@ -1,0 +1,19 @@
+name: Build D-Stream APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm install
+      - name: Build Android APK
+        run: |
+          npx expo prebuild --platform android
+          cd android && ./gradlew assembleRelease
+      - uses: actions/upload-artifact@v4
+        with:
+          name: D-Stream-App
+          path: android/app/build/outputs/apk/release/*.apk
