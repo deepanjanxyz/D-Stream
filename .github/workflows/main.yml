@@ -8,7 +8,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm install
+      - run: npm install --frozen-lockfile || npm install
       - name: Build APK
         run: |
           npx expo prebuild --platform android
